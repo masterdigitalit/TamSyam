@@ -26,7 +26,7 @@ def main_menu_admin():
             [KeyboardButton(text="Статистика")],
             [KeyboardButton(text="Менеджеры")],
             [KeyboardButton(text="Таблица")],
-            # [KeyboardButton(text="")],
+
 
         ],
         resize_keyboard=True,
@@ -51,7 +51,7 @@ def statistic_menu_next():
         inline_keyboard=[
             [
                 InlineKeyboardButton(text="Назад", callback_data="stat_menu"),
-                InlineKeyboardButton(text="Оплатить работников", callback_data="pay_workers")
+
             ]
         ]
     )
@@ -128,51 +128,4 @@ def cancel_reply_keyboard():
 
 
 
-def get_pay_workers_keyboard(orders: list, page: int) -> InlineKeyboardMarkup:
-    buttons = []
-
-    for order in orders:
-        name = order["WorkerName"]
-        price = order["WorkerPrice"]
-        worker_id = order["WorkerId"]
-        Id = order["Id"]
-
-        buttons.append([
-            InlineKeyboardButton(
-                text=f"{name} — {price}₽",
-                callback_data=f"pay_worker_{Id}"
-            )
-        ])
-
-    # Пагинация
-    pagination = []
-    if page > 0:
-        pagination.append(
-            InlineKeyboardButton(
-                text="⬅️ Назад",
-                callback_data=f"pay_worker_prev_{page - 1}"
-            )
-        )
-    if orders:
-        pagination.append(
-            InlineKeyboardButton(
-                text="➡️ Далее",
-                callback_data=f"pay_worker_next_{page + 1}"
-            )
-        )
-    if pagination:
-        buttons.append(pagination)
-
-    return InlineKeyboardMarkup(inline_keyboard=buttons)
-
-
-
-
-
-
-def pay_to_worker_confirm_btn(order):
-    return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="💸 Выплатить", callback_data=f"pay_to_user_order_admin_confirm_{order['Id']}")],
-        [InlineKeyboardButton(text="↩️ Назад", callback_data="pay_workers")]
-    ])
 

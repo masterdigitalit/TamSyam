@@ -1,13 +1,15 @@
 import sqlite3
 from datetime import datetime
-con = sqlite3.connect("C:/Users/maksi/PycharmProjects/job hendler/db/taro.db", detect_types=sqlite3.PARSE_DECLTYPES |
+con = sqlite3.connect("C:/Users/maksi/PycharmProjects/job hendler/db/job.db", detect_types=sqlite3.PARSE_DECLTYPES |
                                                   sqlite3.PARSE_COLNAMES, check_same_thread=False)
 
 
 
 
-def get_all_orders():
 
+
+
+def get_all_orders():
     con.row_factory = sqlite3.Row
     cur = con.cursor()
     cur.execute("""
@@ -20,7 +22,6 @@ def get_all_orders():
             Done,
             WorkerId,
             Active,
-            Paid,
             WorkerPrice,
             dateCreated,
             dateStarted,
@@ -29,12 +30,10 @@ def get_all_orders():
         ORDER BY Id DESC
     """)
     rows = cur.fetchall()
-
     return [dict(row) for row in rows]
 
 
 def get_users_stats():
-
     con.row_factory = sqlite3.Row
     cur = con.cursor()
     cur.execute("""
@@ -50,7 +49,6 @@ def get_users_stats():
         ORDER BY OrdersCount DESC
     """)
     rows = cur.fetchall()
-
     return [dict(row) for row in rows]
 
 
@@ -58,10 +56,8 @@ def get_finance_stats():
     con.row_factory = sqlite3.Row
     cur = con.cursor()
 
-    # Сегодня в формате dd:mm:yyyy
     today = datetime.now().strftime("%d:%m:%Y")
 
-    # --- Получение статистики по всем месяцам ---
     cur.execute("""
         SELECT DISTINCT substr(dateDone, 4, 7) as month_year
         FROM Orders
@@ -93,7 +89,6 @@ def get_finance_stats():
             "Прибыль (мес)": month_data["income_month"] - month_data["workers_month"]
         })
 
-    # --- Статистика за сегодня ---
     cur.execute("""
         SELECT 
             COALESCE(SUM(CAST(Price AS INTEGER)), 0) AS income_day,
@@ -103,7 +98,6 @@ def get_finance_stats():
     """, (today,))
     day = cur.fetchone()
 
-    # --- Статистика за всё время ---
     cur.execute("""
         SELECT 
             COALESCE(SUM(CAST(Price AS INTEGER)), 0) AS income_all,

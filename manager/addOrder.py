@@ -2,15 +2,15 @@ from aiogram import Router, F
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
-from aiogram.filters import Command
-from db.manager import addOrderFromManager  # 💾 функция добавления заказа
-from create_bot import bot
+
+from db.manager import addOrderFromManager
+
 from typing import Union, List
-from aiogram.filters import BaseFilter, Command
+from aiogram.filters import BaseFilter
 from aiogram.types import Message
 from db.manager import getManagersId
 
-# Фильтр
+
 class ChatTypeFilter(BaseFilter):
     def __init__(self, user_id: Union[int, List[int]]):
         if isinstance(user_id, int):
@@ -27,16 +27,16 @@ class ChatTypeFilter(BaseFilter):
             return False
         return message.from_user.id in self.user_ids
 
-# Ваша функция, возвращающая список ID админов
 
 
-# Хендлер для админов
+
+
 
 
 router = Router()
 
 
-# ==== Состояния FSM ====
+
 class AddOrderManagerState(StatesGroup):
     adress = State()
     name = State()
@@ -45,14 +45,14 @@ class AddOrderManagerState(StatesGroup):
     confirm = State()
 
 
-# ==== Клавиатура отмены ====
+
 def cancel_keyboard(callback: str = "cancel_add_order"):
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="❌ Отмена", callback_data=callback)]
     ])
 
 
-# ==== Старт FSM ====
+
 @router.callback_query(F.data == "add_order_manager", ChatTypeFilter(getManagersId()))
 async def start_add_order(callback: CallbackQuery, state: FSMContext):
     await state.set_state(AddOrderManagerState.adress)
@@ -60,7 +60,7 @@ async def start_add_order(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
 
 
-# ==== Адрес ====
+
 @router.message(AddOrderManagerState.adress, ChatTypeFilter(getManagersId()))
 async def add_adress(msg: Message, state: FSMContext):
     await state.update_data(adress=msg.text)
@@ -68,7 +68,7 @@ async def add_adress(msg: Message, state: FSMContext):
     await msg.answer("🙍‍♂️ Введите имя клиента:", reply_markup=cancel_keyboard())
 
 
-# ==== Имя ====
+
 @router.message(AddOrderManagerState.name, ChatTypeFilter(getManagersId()))
 async def add_name(msg: Message, state: FSMContext):
     await state.update_data(name=msg.text)
@@ -76,7 +76,7 @@ async def add_name(msg: Message, state: FSMContext):
     await msg.answer("📞 Введите номер телефона:", reply_markup=cancel_keyboard())
 
 
-# ==== Телефон ====
+
 @router.message(AddOrderManagerState.phone, ChatTypeFilter(getManagersId()))
 async def add_phone(msg: Message, state: FSMContext):
     await state.update_data(phone=msg.text)
@@ -84,7 +84,7 @@ async def add_phone(msg: Message, state: FSMContext):
     await msg.answer("📝 Введите описание заказа:", reply_markup=cancel_keyboard())
 
 
-# ==== Описание ====
+
 @router.message(AddOrderManagerState.desc, ChatTypeFilter(getManagersId()))
 async def add_desc(msg: Message, state: FSMContext):
     await state.update_data(desc=msg.text)
@@ -106,12 +106,12 @@ async def add_desc(msg: Message, state: FSMContext):
     await msg.answer(text, reply_markup=kb)
 
 
-# ==== Подтверждение ====
+
 @router.callback_query(F.data == "confirm_add_order", ChatTypeFilter(getManagersId()))
 async def confirm_add(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
 
-    # 🧠 Добавление в БД
+
     addOrderFromManager(
         adress=data['adress'],
         name=data['name'],
@@ -124,7 +124,7 @@ async def confirm_add(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
 
 
-# ==== Отмена ====
+
 @router.callback_query(F.data == "cancel_add_order", ChatTypeFilter(getManagersId()))
 async def cancel_add(callback: CallbackQuery, state: FSMContext):
     await state.clear()

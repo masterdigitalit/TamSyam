@@ -1,5 +1,3 @@
-
-
 from aiogram import Router
 from create_bot import bot
 from keyboard.admin import main_menu_admin
@@ -26,10 +24,7 @@ class ChatTypeFilter(BaseFilter):
             return False
         return message.from_user.id in self.user_ids
 
-# Ваша функция, возвращающая список ID админов
 
-
-# Хендлер для админов
 @router.message(Command("start"), ChatTypeFilter(getAdminsId()))
 async def admin_start_handler(message: Message):
     await bot.send_message(message.chat.id, "Привет, админ!\nЧто хочешь сделать ?", reply_markup=main_menu_admin())

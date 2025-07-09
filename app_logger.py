@@ -7,7 +7,7 @@ os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
 logger = logging.getLogger("flask_app_logger")
 logger.setLevel(logging.DEBUG)
 
-if not logger.handlers:  # ← важно! чтобы не было повторов
+if not logger.handlers:
     file_handler = logging.FileHandler(LOG_PATH, encoding='utf-8')
     file_handler.setLevel(logging.DEBUG)
 

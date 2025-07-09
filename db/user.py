@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime
 
-con = sqlite3.connect("C:/Users/maksi/PycharmProjects/job hendler/db/taro.db", detect_types=sqlite3.PARSE_DECLTYPES |
+con = sqlite3.connect("C:/Users/maksi/PycharmProjects/job hendler/db/job.db", detect_types=sqlite3.PARSE_DECLTYPES |
                                                   sqlite3.PARSE_COLNAMES, check_same_thread=False)
 from utils.calcWorkerShare import   calculate_payout
 def createTable():
@@ -116,24 +116,11 @@ def get_user_done_paid_orders(id):
         """
         SELECT SUM(CAST(WorkerPrice AS INTEGER)) as total
         FROM Orders
-        WHERE Active = 1 AND Done = 1 AND Paid = 1 AND WorkerId = ?
+        WHERE Active = 1 AND Done = 1  AND WorkerId = ?
         """,
         [id]
     )
     row = cursor.fetchone()
     return row["total"] or 0
 
-def get_user_done_not_paid_orders(id):
-    con.row_factory = sqlite3.Row
-    cursor = con.cursor()
-    cursor.execute(
-        """
-        SELECT SUM(CAST(WorkerPrice AS INTEGER)) AS total
-        FROM Orders
-        WHERE Active = 1 AND Done = 1 AND (Paid IS NULL OR Paid != 1) AND WorkerId = ?
-        """,
-        [id]
-    )
-    row = cursor.fetchone()
-    return row["total"] or 0
 

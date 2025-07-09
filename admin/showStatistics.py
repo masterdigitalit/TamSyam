@@ -2,14 +2,12 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import BaseFilter
 from typing import Union, List
-
 from create_bot import bot
-from db.admin import getAdminsId, get_user_order_stats_all,get_user_order_stats_today, get_unpaid_worker_all, get_unpaid_worker_today
-from keyboard.admin import statistic_menu_admin, statistic_menu_next, get_pay_workers_keyboard
-
+from db.admin import getAdminsId, get_user_order_stats_all,get_user_order_stats_today
+from keyboard.admin import statistic_menu_admin, statistic_menu_next
 router = Router()
 
-# Фильтр
+
 class ChatTypeFilter(BaseFilter):
     def __init__(self, user_id: Union[int, List[int]]):
         self.user_ids = [user_id] if isinstance(user_id, int) else user_id or []
@@ -18,7 +16,7 @@ class ChatTypeFilter(BaseFilter):
         return message.from_user.id in self.user_ids
 
 
-# Стартовая точка
+
 @router.message(F.text == "Статистика", ChatTypeFilter(getAdminsId()))
 async def handle_orders(message: Message):
     await bot.send_message(message.from_user.id, '📊 За какой период?', reply_markup=statistic_menu_admin())
@@ -36,11 +34,11 @@ async def handle_orders_all(callback: CallbackQuery):
 
 
 
-# 🔘 Обработка инлайн-кнопки "За сегодня"
+
 @router.callback_query(F.data == "stat_today", ChatTypeFilter(getAdminsId()))
 async def handle_today(callback: CallbackQuery):
     await bot.delete_message(callback.from_user.id, callback.message.message_id)
-    pay_waiting = get_unpaid_worker_today()
+
     stat = get_user_order_stats_today()
 
     text = (
@@ -49,13 +47,13 @@ async def handle_today(callback: CallbackQuery):
         "💰 <b>Прибыль:</b> <code>{total_price} ₽</code>\n"
         "👷‍♂️ <b>Заработали работники:</b> <code>{total_worker_price} ₽</code>\n"
         "🏦 <b>Выручка:</b> <code>{profit} ₽</code>\n"
-        "⏳ <b>Ожидает выплаты работникам:</b> <code>{pay_waiting} ₽</code>\n"
+
     ).format(
         count=stat["count"],
         total_price=stat["total_price"],
         total_worker_price=stat["total_worker_price"],
         profit=stat["total_price"] - stat["total_worker_price"],
-        pay_waiting=pay_waiting
+
     )
 
     await callback.answer()
@@ -66,7 +64,6 @@ async def handle_today(callback: CallbackQuery):
 async def handle_all(callback: CallbackQuery):
     await bot.delete_message(callback.from_user.id, callback.message.message_id)
     stat = get_user_order_stats_all()
-    pay_waiting = get_unpaid_worker_all()
 
     text = (
         "📊 <b>📅 Статистика за <u>все время</u></b>\n\n"
@@ -74,13 +71,13 @@ async def handle_all(callback: CallbackQuery):
         "💰 <b>Прибыль:</b> <code>{total_price} ₽</code>\n"
         "👷‍♂️ <b>Заработали работники:</b> <code>{total_worker_price} ₽</code>\n"
         "🏦 <b>Выручка:</b> <code>{profit} ₽</code>\n"
-        "⏳ <b>Ожидает выплаты работникам:</b> <code>{pay_waiting} ₽</code>\n"
+
     ).format(
         count=stat["count"],
         total_price=stat["total_price"],
         total_worker_price=stat["total_worker_price"],
         profit=stat["total_price"] - stat["total_worker_price"],
-        pay_waiting=pay_waiting
+
     )
 
     await callback.answer()

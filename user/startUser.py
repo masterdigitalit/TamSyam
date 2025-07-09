@@ -8,7 +8,7 @@ from keyboard.user import main_menu_worker
 router = Router()
 
 
-# Хендлер для всех остальных (если не в списке)
+
 @router.message(Command("start"))
 async def no_access_handler(message: Message):
     print(getUsersId())

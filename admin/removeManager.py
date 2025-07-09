@@ -3,13 +3,13 @@ from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardBut
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import BaseFilter
 from typing import Union, List
-from create_bot import bot
+
 from db.admin import delete_manager_by_id, getAdminsId
-from keyboard.admin import main_menu_admin
+
 
 router = Router()
 
-# ✅ Фильтр на админов
+
 class ChatTypeFilter(BaseFilter):
     def __init__(self, user_id: Union[int, List[int]]):
         self.user_ids = [user_id] if isinstance(user_id, int) else user_id or []
@@ -22,14 +22,14 @@ class ChatTypeFilter(BaseFilter):
         )
         return user_id in self.user_ids
 
-# ✅ Кнопка подтверждения
+
 def get_remove_manager_confirm_kb(manager_id: int):
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="✅ Подтвердить удаление", callback_data=f"confirm_remove_manager_{manager_id}")],
         [InlineKeyboardButton(text="❌ Отмена", callback_data=f"cancel_remove_manager_{manager_id}")]
     ])
 
-# ✅ Старт удаления — показать подтверждение
+
 @router.callback_query(F.data.startswith("remove_manager_"), ChatTypeFilter(user_id=getAdminsId()))
 async def start_remove_manager(callback: CallbackQuery, state: FSMContext):
     manager_id = callback.data.split("_")[-1]
@@ -46,7 +46,7 @@ async def start_remove_manager(callback: CallbackQuery, state: FSMContext):
         parse_mode="HTML"
     )
 
-# ✅ Подтверждение удаления
+
 @router.callback_query(F.data.startswith("confirm_remove_manager_"), ChatTypeFilter(user_id=getAdminsId()))
 async def confirm_remove_manager(callback: CallbackQuery, state: FSMContext):
     manager_id = callback.data.split("_")[-1]
@@ -68,7 +68,7 @@ async def confirm_remove_manager(callback: CallbackQuery, state: FSMContext):
 
     await state.clear()
 
-# ✅ Отмена удаления
+
 @router.callback_query(F.data.startswith("cancel_remove_manager_"), ChatTypeFilter(user_id=getAdminsId()))
 async def cancel_remove_manager(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text("❌ Удаление менеджера отменено.")

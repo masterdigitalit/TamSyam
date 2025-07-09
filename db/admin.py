@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime
-con = sqlite3.connect("C:/Users/maksi/PycharmProjects/job hendler/db/taro.db", detect_types=sqlite3.PARSE_DECLTYPES |
+con = sqlite3.connect("C:/Users/maksi/PycharmProjects/job hendler/db/job.db", detect_types=sqlite3.PARSE_DECLTYPES |
                                                   sqlite3.PARSE_COLNAMES, check_same_thread=False)
 
 def createTable():
@@ -111,54 +111,12 @@ def get_user_order_stats_today():
     return dict(row) if row else None
 
 
-def get_unpaid_worker_all():
-
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-    cur.execute("""
-        SELECT 
-            COALESCE(SUM(CAST(WorkerPrice AS INTEGER)), 0) AS unpaid_total
-        FROM Orders
-        WHERE Done = 1 AND (Paid IS NULL OR Paid != 1)
-    """)
-    row = cur.fetchone()
-    return row["unpaid_total"] if row else 0
-
-def get_unpaid_worker_today():
-    today = datetime.now().strftime("%d:%m:%Y")
-
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-    cur.execute("""
-         SELECT 
-             COALESCE(SUM(CAST(WorkerPrice AS INTEGER)), 0) AS unpaid_total
-         FROM Orders
-         WHERE  Done = 1 AND (Paid IS NULL OR Paid != 1) AND dateDone = ?
-     """, (today,))
-    row = cur.fetchone()
-    return row["unpaid_total"] if row else 0
 
 
-def get_unpaid_workers_paginated(offset: int = 0, limit: int = 10):
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-    cur.execute("""
-        SELECT 
-            Orders.Id, 
-            Orders.WorkerId, 
-            Orders.WorkerPrice, 
-            Orders.Adress, 
-            Orders.DateCreated,
-            Users.Name AS WorkerName
-        FROM Orders
-        LEFT JOIN Users ON Orders.WorkerId = Users.TelegramId
-        WHERE Orders.Done = 1 
-          AND Orders.Active = 1 
-          AND (Orders.Paid IS NULL OR Orders.Paid != 1)
-        ORDER BY Orders.Id DESC
-        LIMIT ? OFFSET ?
-    """, (limit, offset))
-    return cur.fetchall()
+
+
+
+
 
 
 def delete_manager_by_id(telegram_id:int):
@@ -167,7 +125,7 @@ def delete_manager_by_id(telegram_id:int):
     cursor.execute("DELETE FROM Users WHERE TelegramId = ?", [telegram_id])
     con.commit()
 
-    deleted_count = cursor.rowcount  # количество удалённых строк
+    deleted_count = cursor.rowcount
     cursor.close()
     return deleted_count > 0
 
@@ -183,44 +141,10 @@ def addManager(telegramId, Name , UserName):
 
 
 
-def count_unpaid_workers() -> int:
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-    cur.execute("""
-        SELECT COUNT(*) AS total
-        FROM Orders
-        WHERE Done = 1 AND Active = 1 AND (Paid IS NULL OR Paid != 1)
-    """)
-    row = cur.fetchone()
-    return row["total"] if row else 0
-
-
-
-def get_order_to_pay(order_id):
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-    cur.execute("""
-           SELECT Orders.Id, Orders.WorkerId, Orders.WorkerPrice, Orders.Adress, Orders.dateCreated,Orders.dateDone,
-                  Users.Name AS WorkerName
-           FROM Orders
-           LEFT JOIN Users ON Orders.WorkerId = Users.TelegramId
-           WHERE Orders.Id = ?
-             
-       """, (order_id,))
-    order = cur.fetchone()
-    return order
 
 
 
 
-def set_order_paid(order_id):
-    cur = con.cursor()
-    cur.execute("""
-           UPDATE Orders
-           SET Paid = 1
-           WHERE Id = ?
-       """, (order_id,))
-    con.commit()
 
 
 def is_manager_exists(telegram_id: int) -> bool:

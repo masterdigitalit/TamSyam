@@ -24,10 +24,7 @@ class ChatTypeFilter(BaseFilter):
             return False
         return message.from_user.id in self.user_ids
 
-# Ваша функция, возвращающая список ID админов
 
-
-# Хендлер для админов
 
 router = Router()
 
@@ -56,7 +53,7 @@ async def handle_user_detail(callback: CallbackQuery):
       f"Тг @{manager['UserName']}"
     )
 
-    # Возврат на список пользователей, передаём текущую страницу (например, 0)
+
     keyboard = back_to_managers_button(id=manager['TelegramId'])
 
     await callback.message.edit_text(text, reply_markup=keyboard, parse_mode="HTML")

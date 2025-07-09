@@ -4,13 +4,12 @@ from aiogram import Bot
 from app_logger import logger
 from create_bot import dp, bot
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-# from admin import getVideo, textHandler
 from user import startUser, showOrdersUser, showOrderToUser, startOrder, showMyOrders, confirmComplete, showBalance
-from admin import startAdmin, showStatistics, showManagers, showManagerInfo, removeManager, addManager, payWorkers, getExcel
+from admin import startAdmin, showStatistics, showManagers, showManagerInfo, removeManager, addManager, getExcel
 from manager import startManager, showUsers, showUserInfo, addUser, removeUser, manageOrder, showOrdersManager, addOrder
 from middlewares.logger import MessageLoggerMiddleware, CallbackLoggerMiddleware
+from db.create import init_db
 
-# Твой Telegram chat_id (замени на свой реальный ID)
 ADMIN_CHAT_ID = 5273914742
 
 dp.message.middleware(MessageLoggerMiddleware())
@@ -51,6 +50,7 @@ async def shutdown():
 
 
 async def telegram():
+    init_db()
     logger.info("🤖 Бот запущен")
 
     scheduler.start()
@@ -62,7 +62,6 @@ async def telegram():
         showManagerInfo.router,
         removeManager.router,
         addManager.router,
-        payWorkers.router,
         getExcel.router
     )
     # manager
@@ -95,7 +94,7 @@ if __name__ == "__main__":
         try:
             asyncio.run(send_error_to_admin(err_text))
         except RuntimeError:
-            # event loop уже закрыт
+
             pass
         try:
             asyncio.run(shutdown())

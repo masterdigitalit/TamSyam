@@ -1,7 +1,7 @@
 from aiogram import BaseMiddleware
 from aiogram.types import Message, CallbackQuery
 from typing import Callable, Dict, Any
-from app_logger import logger  # импортируй свой логгер
+from app_logger import logger
 
 class MessageLoggerMiddleware(BaseMiddleware):
     async def __call__(

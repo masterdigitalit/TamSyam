@@ -40,14 +40,13 @@ def export_to_excel(output_path):
     orders_df = pd.DataFrame(orders)
     users_df = pd.DataFrame(users)
 
-    # Преобразуем месячные данные в DataFrame
+
     monthly_df = pd.DataFrame(finance_stats["По месяцам"])
 
-    # Создадим DataFrame для "Сегодня" и "За всё время" — для удобства сделаем по одной строке с понятными колонками
     today_dict = finance_stats["Сегодня"]
     all_time_dict = finance_stats["За всё время"]
 
-    # Можно объединить их в один DataFrame, например так:
+
     summary_df = pd.DataFrame([
         {
             "Период": "Сегодня",
@@ -63,7 +62,7 @@ def export_to_excel(output_path):
         }
     ])
 
-    # Переименовываем столбцы заказов
+
     orders_df.rename(columns={
         "Id": "ID",
         "Adress": "Адрес",
@@ -79,7 +78,7 @@ def export_to_excel(output_path):
         "Paid": "Оплачен работнику"
     }, inplace=True)
 
-    # Переименовываем столбцы работников
+
     users_df.rename(columns={
         "WorkerName": "Имя работника",
         "TelegramId": "Telegram ID",
@@ -88,7 +87,7 @@ def export_to_excel(output_path):
         "TotalEarned": "Всего заработано"
     }, inplace=True)
 
-    # Переименовываем столбцы по месяцам (чтобы было аккуратно)
+
     monthly_df.rename(columns={
         "Месяц": "Месяц",
         "Доход (мес)": "Доход",
@@ -97,26 +96,24 @@ def export_to_excel(output_path):
     }, inplace=True)
 
     with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
-        # Заказы
+
         orders_df.to_excel(writer, sheet_name="Заказы", index=False)
         autofit_columns(writer, "Заказы", orders_df)
         colorize_boolean_columns(writer.sheets["Заказы"], orders_df, ["Готов", "В работе", "Оплачен работнику"])
 
-        # Работники
         users_df.to_excel(writer, sheet_name="Работники", index=False)
         autofit_columns(writer, "Работники", users_df)
 
-        # Бухгалтерия
-        # Сначала пишем свод по месяцам
+
         monthly_df.to_excel(writer, sheet_name="Бухгалтерия", startrow=0, index=False)
         autofit_columns(writer, "Бухгалтерия", monthly_df)
 
-        # Далее ниже добавим свод по "Сегодня" и "За всё время"
-        summary_startrow = len(monthly_df) + 3  # пустая строка после таблицы
+
+        summary_startrow = len(monthly_df) + 3
 
         summary_df.to_excel(writer, sheet_name="Бухгалтерия", startrow=summary_startrow, index=False)
         autofit_columns(writer, "Бухгалтерия", summary_df)
 
 
-# Запуск
+
 export_to_excel("report.xlsx")

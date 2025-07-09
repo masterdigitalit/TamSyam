@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime
-con = sqlite3.connect("C:/Users/maksi/PycharmProjects/job hendler/db/taro.db", detect_types=sqlite3.PARSE_DECLTYPES |
+con = sqlite3.connect("C:/Users/maksi/PycharmProjects/job hendler/db/job.db", detect_types=sqlite3.PARSE_DECLTYPES |
                                                   sqlite3.PARSE_COLNAMES, check_same_thread=False)
 
 def createTable():
@@ -160,7 +160,7 @@ def deleteUserFromManager(telegram_id):
     cursor.execute("DELETE FROM Users WHERE TelegramId = ?", [telegram_id])
     con.commit()
 
-    deleted_count = cursor.rowcount  # количество удалённых строк
+    deleted_count = cursor.rowcount
     cursor.close()
     return deleted_count > 0
 

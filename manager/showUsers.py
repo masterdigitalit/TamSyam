@@ -10,7 +10,7 @@ from aiogram.filters import BaseFilter, Command
 from aiogram.types import Message
 from db.manager import getManagersId
 
-# Фильтр
+
 class ChatTypeFilter(BaseFilter):
     def __init__(self, user_id: Union[int, List[int]]):
         if isinstance(user_id, int):
@@ -27,10 +27,7 @@ class ChatTypeFilter(BaseFilter):
             return False
         return message.from_user.id in self.user_ids
 
-# Ваша функция, возвращающая список ID админов
 
-
-# Хендлер для админов
 
 
 

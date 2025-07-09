@@ -25,10 +25,7 @@ class ChatTypeFilter(BaseFilter):
             return False
         return message.from_user.id in self.user_ids
 
-# Ваша функция, возвращающая список ID админов
 
-
-# Хендлер для админ
 @router.message(F.text == "Менеджеры", ChatTypeFilter(getAdminsId()))
 async def handle_users_list(message: Message):
     page = 0

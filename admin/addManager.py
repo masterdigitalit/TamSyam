@@ -15,13 +15,13 @@ from db.admin import getAdminsId, addManager, is_manager_exists
 
 router = Router()
 
-# ======= Состояния FSM =======
+
 class AddManagerState(StatesGroup):
     fio = State()
     telegram_id = State()
     confirm = State()
 
-# ======= Инлайн-кнопки подтверждения =======
+
 def get_manager_confirm_kb():
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="✅ Подтвердить", callback_data="add_manager_confirm")],
@@ -29,13 +29,13 @@ def get_manager_confirm_kb():
         [InlineKeyboardButton(text="❌ Отменить", callback_data="add_manager_cancel")]
     ])
 
-# ======= Отмена на первом шаге =======
+
 def cancel_inline_start():
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="❌ Отменить", callback_data="add_manager_cancel")]
     ])
 
-# ======= Reply-клавиатура "❌ Отмена" =======
+
 def cancel_reply_keyboard():
     return ReplyKeyboardMarkup(
         keyboard=[[KeyboardButton(text="❌ Отмена")]],
@@ -43,7 +43,7 @@ def cancel_reply_keyboard():
         one_time_keyboard=True
     )
 
-# ======= Фильтр по admin ID =======
+
 class ChatTypeFilter(BaseFilter):
     def __init__(self, user_id: Union[int, List[int]]):
         self.user_ids = [user_id] if isinstance(user_id, int) else user_id or []
@@ -51,21 +51,21 @@ class ChatTypeFilter(BaseFilter):
     async def __call__(self, message: Message) -> bool:
         return message.from_user.id in self.user_ids
 
-# ======= Старт FSM =======
+
 @router.callback_query(F.data == "add_manager_admin", ChatTypeFilter(user_id=getAdminsId()))
 async def add_manager_start(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await state.set_state(AddManagerState.fio)
     await bot.send_message(callback.from_user.id, "📝 Введите ФИО менеджера одним сообщением:", reply_markup=cancel_inline_start())
 
-# ======= Шаг: ФИО =======
+
 @router.message(AddManagerState.fio, ChatTypeFilter(user_id=getAdminsId()))
 async def add_manager_fio(message: Message, state: FSMContext):
     await state.update_data(fio=message.text.strip())
     await state.set_state(AddManagerState.telegram_id)
     await message.answer("📩 Перешли сообщение от менеджера (чтобы получить Telegram ID):", reply_markup=cancel_inline_start())
 
-# ======= Шаг: получение ID =======
+
 @router.message(AddManagerState.telegram_id, ChatTypeFilter(user_id=getAdminsId()))
 async def add_manager_forward(message: Message, state: FSMContext):
     text = message.text.strip().lower() if message.text else ""
@@ -107,12 +107,12 @@ async def add_manager_forward(message: Message, state: FSMContext):
         parse_mode="HTML"
     )
 
-# ======= Подтверждение =======
+
 @router.callback_query(AddManagerState.confirm, F.data == "add_manager_confirm", ChatTypeFilter(user_id=getAdminsId()))
 async def confirm_add_manager(callback_query: CallbackQuery, state: FSMContext):
     data = await state.get_data()
 
-    # 🔍 Проверка — существует ли уже менеджер
+
     if is_manager_exists(data['telegram_id']):
         await bot.send_message(
             callback_query.from_user.id,
@@ -137,14 +137,14 @@ async def confirm_add_manager(callback_query: CallbackQuery, state: FSMContext):
         reply_markup=main_menu_admin()
     )
     await state.clear()
-# ======= Перезапуск =======
+
 @router.callback_query(AddManagerState.confirm, F.data == "add_manager_restart", ChatTypeFilter(user_id=getAdminsId()))
 async def restart_manager(callback_query: CallbackQuery, state: FSMContext):
     await state.clear()
     await state.set_state(AddManagerState.fio)
     await bot.send_message(callback_query.from_user.id, "🔁 Введите ФИО менеджера:", reply_markup=cancel_inline_start())
 
-# ======= Отмена (inline-кнопка) =======
+
 @router.callback_query(F.data == "add_manager_cancel", ChatTypeFilter(user_id=getAdminsId()))
 async def cancel_manager_inline(callback_query: CallbackQuery, state: FSMContext):
     await state.clear()

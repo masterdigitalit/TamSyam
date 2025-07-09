@@ -13,7 +13,7 @@ from create_bot import bot
 
 router = Router()
 
-# ======= Фильтр по ID менеджеров =======
+
 class ChatTypeFilter(BaseFilter):
     def __init__(self, user_id: Union[int, List[int]]):
         if isinstance(user_id, int):
@@ -26,7 +26,7 @@ class ChatTypeFilter(BaseFilter):
         print(f"[FILTER] self.user_ids = {self.user_ids}")
         return message.from_user.id in self.user_ids
 
-# ======= Кнопка "Назад к заказам" и Удалить =======
+
 def back_to_orders_button(page: int = 0, order_id: int = 0):
     return InlineKeyboardMarkup(
         inline_keyboard=[
@@ -37,7 +37,7 @@ def back_to_orders_button(page: int = 0, order_id: int = 0):
         ]
     )
 
-# ======= Просмотр деталей заказа =======
+
 @router.callback_query(F.data.startswith("order_manage_"), ChatTypeFilter(getManagersId()))
 async def handle_order_detail(callback: CallbackQuery):
     order_id = int(callback.data.split("_")[2])
@@ -94,7 +94,7 @@ async def handle_order_detail(callback: CallbackQuery):
     await callback.message.edit_text(text, reply_markup=back_to_orders_button(page, order_id))
     await callback.answer()
 
-# ======= Подтверждение удаления =======
+
 @router.callback_query(F.data.startswith("order_confirm_remove_"), ChatTypeFilter(getManagersId()))
 async def confirm_order_delete(callback: CallbackQuery):
     order_id = int(callback.data.split("_")[-1])
@@ -111,7 +111,7 @@ async def confirm_order_delete(callback: CallbackQuery):
     )
     await callback.answer()
 
-# ======= Отмена удаления =======
+
 @router.callback_query(F.data.startswith("cancel_order_delete_"), ChatTypeFilter(getManagersId()))
 async def cancel_delete_order(callback: CallbackQuery):
     order_id = int(callback.data.split("_")[-1])
@@ -119,7 +119,7 @@ async def cancel_delete_order(callback: CallbackQuery):
     await callback.message.answer("❌ Удаление отменено.")
     await callback.answer()
 
-# ======= Удаление заказа =======
+
 @router.callback_query(F.data.startswith("order_manager_remove_"), ChatTypeFilter(getManagersId()))
 async def handle_order_delete(callback: CallbackQuery):
     try:

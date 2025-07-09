@@ -10,7 +10,7 @@ from create_bot import bot
 
 router = Router()
 
-# ======= Фильтр по ID менеджеров =======
+
 class ChatTypeFilter(BaseFilter):
     def __init__(self, user_id: Union[int, List[int]]):
         if isinstance(user_id, int):
@@ -24,7 +24,7 @@ class ChatTypeFilter(BaseFilter):
         return callback.from_user.id in self.user_ids
 
 
-# ======= 1. Нажали «Удалить работника» =======
+
 @router.callback_query(F.data.startswith("del_user_"), ChatTypeFilter(user_id=getManagersId()))
 async def confirm_delete_worker(callback: CallbackQuery, state: FSMContext):
     worker_id_str = callback.data.split("_")[-1]
@@ -43,7 +43,6 @@ async def confirm_delete_worker(callback: CallbackQuery, state: FSMContext):
     await state.clear()
 
 
-# ======= 2. Подтвердили удаление =======
 @router.callback_query(F.data.startswith("confirm_del_user_"), ChatTypeFilter(user_id=getManagersId()))
 async def delete_worker(callback: CallbackQuery, state: FSMContext):
     worker_id_str = callback.data.split("_")[-1]
@@ -69,7 +68,7 @@ async def delete_worker(callback: CallbackQuery, state: FSMContext):
     await state.clear()
 
 
-# ======= 3. Отменили удаление =======
+
 @router.callback_query(F.data == "cancel_del", ChatTypeFilter(user_id=getManagersId()))
 async def cancel_delete_worker(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text("❌ Удаление отменено.", reply_markup=main_menu_manager())

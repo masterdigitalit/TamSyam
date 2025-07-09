@@ -1,6 +1,5 @@
 from aiogram import Router, F
-from aiogram.types import Message
-from create_bot import bot
+
 from db.user import getOrder
 from keyboard.user import back_to_orders_button, back_to_my_orders_button
 from aiogram.types import CallbackQuery
@@ -26,7 +25,7 @@ async def handle_order_detail(callback: CallbackQuery):
             f"📞 Телефон: {order['Phone']}\n"
             f"✅ Активный: {'Да' if order['Active'] else 'Нет'}"
         )
-        page = 0  # можно позже передавать динамически через callback_data
+        page = 0
         await callback.message.edit_text(text, reply_markup=back_to_my_orders_button(page, order_id))
         await callback.answer()
     else:
@@ -38,6 +37,6 @@ async def handle_order_detail(callback: CallbackQuery):
             f"📞 Телефон: {order['Phone']}\n"
             f"✅ Активный: {'Да' if order['Active'] else 'Нет'}"
         )
-        page = 0  # можно позже передавать динамически через callback_data
+        page = 0
         await callback.message.edit_text(text, reply_markup=back_to_orders_button(page, order_id))
         await callback.answer()
