@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.filters import BaseFilter
 from typing import Union, List
-
+from admin.notification import manager_add_worker
 from create_bot import bot
 from keyboard.manager import main_menu_manager
 from db.manager import getManagersId, addWorkerFromManager, is_worker_exists
@@ -123,6 +123,7 @@ async def confirm_add_worker(callback_query: CallbackQuery, state: FSMContext):
         Name=data['fio'],
         UserName=data["username"]
     )
+    await manager_add_worker({"manager_name":callback_query.from_user.username, "username":data['username'], "name":data['fio']})
 
     await bot.delete_message(callback_query.from_user.id, callback_query.message.message_id)
     await bot.send_message(callback_query.from_user.id, f"✅ Работник добавлен:\n<b>{data['fio']}</b>", parse_mode="HTML", reply_markup=main_menu_manager())

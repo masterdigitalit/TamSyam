@@ -1,9 +1,7 @@
 from aiogram import Router, F
-from aiogram.types import Message
-from create_bot import bot
 from db.user import getOrder, setOrderActive, count_user_orders
-from keyboard.user import back_to_orders_button
 from aiogram.types import CallbackQuery
+from manager.notification import worker_start_order
 router = Router()
 
 @router.callback_query(F.data.startswith("start_"))
@@ -31,6 +29,11 @@ async def handle_start_order(callback: CallbackQuery):
 
 
     setOrderActive( callback.from_user.id, order_id)
-
+    await worker_start_order({'id':callback.from_user.id,"order":order_id})
     await callback.answer("🚀 Вы приступили к заказу!")
     await callback.message.edit_text(f"✅ Заказ #{order_id} отмечен как активный.")
+
+
+
+
+

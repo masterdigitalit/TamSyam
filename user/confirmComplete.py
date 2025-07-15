@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-
+from manager.notification import   worker_confirm_order
 from db.user import confirmOrder
 from create_bot import bot
 from keyboard.user import cancel_reply_keyboard, main_menu_worker
@@ -81,6 +81,9 @@ async def confirm_order(callback_query: CallbackQuery, state: FSMContext):
         return
 
     confirmOrder(id=order_id, comment="", price=price)
+    await worker_confirm_order({"order":order_id, "id":callback_query.from_user.id})
+
+
     await state.clear()
     await bot.delete_message(callback_query.from_user.id, callback_query.message.message_id)
     await bot.send_message(callback_query.from_user.id, "✅ Заказ успешно помечен как выполненный.", reply_markup=main_menu_worker())

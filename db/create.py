@@ -1,8 +1,7 @@
 import sqlite3
+from datetime import datetime
 import os
-
-DB_PATH = "job.db"  # путь к файлу БД
-
+DB_PATH = "C:/Users/maksi/PycharmProjects/job hendler/db/job.db"
 # SQL-команды для создания таблиц
 # ⚠️ Эти команды должны точно соответствовать структуре твоей БД!
 CREATE_ORDERS_TABLE = """
@@ -37,15 +36,17 @@ def init_db():
         return
 
     print("⚙️ Создание новой базы данных...")
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
+    con = sqlite3.connect("C:/Users/maksi/PycharmProjects/job hendler/db/job.db", detect_types=sqlite3.PARSE_DECLTYPES |
+                                                                                               sqlite3.PARSE_COLNAMES,
+                          check_same_thread=False)
+    cursor = con.cursor()
 
     # Создание таблиц
     cursor.execute(CREATE_ORDERS_TABLE)
     cursor.execute(CREATE_USERS_TABLE)
 
-    conn.commit()
-    conn.close()
+    con.commit()
+    con.close()
     print("✅ База данных успешно создана.")
 
 
