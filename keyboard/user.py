@@ -41,7 +41,7 @@ def get_my_orders_keyboard(orders: list, page: int = 0) -> InlineKeyboardMarkup:
     keyboard = []
 
     for order in orders:
-        text = f"#{order['Id']} — {order['Adress']}"
+        text = f"{order['Adress']} - {order['ArriveDate']}"
         keyboard.append([
             InlineKeyboardButton(
                 text=text,

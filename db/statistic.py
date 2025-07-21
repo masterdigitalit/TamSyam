@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime
-con = sqlite3.connect("C:/Users/maksi/PycharmProjects/job hendler/db/job.db", detect_types=sqlite3.PARSE_DECLTYPES |
+con = sqlite3.connect("C:/Users/Никита/PycharmProjects/TamSyam/db/job.db", detect_types=sqlite3.PARSE_DECLTYPES |
                                                   sqlite3.PARSE_COLNAMES, check_same_thread=False)
 
 

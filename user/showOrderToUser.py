@@ -23,7 +23,8 @@ async def handle_order_detail(callback: CallbackQuery):
             f"📍 Адрес: {order['Adress']}\n"
             f"👤 Клиент: {order['FullName']}\n"
             f"📞 Телефон: {order['Phone']}\n"
-            f"✅ Активный: {'Да' if order['Active'] else 'Нет'}"
+            f"✅ Активный: {'Да' if order['Active'] else 'Нет'}\n"
+            f"Дата и время прибытия {order['ArriveDate']}"
         )
         page = 0
         await callback.message.edit_text(text, reply_markup=back_to_my_orders_button(page, order_id))
@@ -35,7 +36,8 @@ async def handle_order_detail(callback: CallbackQuery):
             f"📍 Адрес: {order['Adress']}\n"
             f"👤 Клиент: {order['FullName']}\n"
             f"📞 Телефон: {order['Phone']}\n"
-            f"✅ Активный: {'Да' if order['Active'] else 'Нет'}"
+            f"✅ Активный: {'Да' if order['Active'] else 'Нет'}\n"
+            f"Дата и время прибытия {order['ArriveDate']}"
         )
         page = 0
         await callback.message.edit_text(text, reply_markup=back_to_orders_button(page, order_id))

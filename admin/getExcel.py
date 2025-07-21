@@ -4,7 +4,7 @@ from aiogram.filters import BaseFilter
 from typing import Union, List
 from pathlib import Path
 from create_bot import bot
-from db.admin import getAdminsId
+from db.admin import getOwnersId
 import pandas as pd
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import PatternFill
@@ -22,7 +22,7 @@ class ChatTypeFilter(BaseFilter):
 
 
 
-@router.message(F.text == "Таблица", ChatTypeFilter(getAdminsId()))
+@router.message(F.text == "Таблица", ChatTypeFilter(getOwnersId()))
 async def handle_orders(message: Message):
     def autofit_columns(writer, sheet_name, dataframe):
         worksheet = writer.sheets[sheet_name]

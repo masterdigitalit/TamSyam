@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime
-con = sqlite3.connect("C:/Users/maksi/PycharmProjects/job hendler/db/job.db", detect_types=sqlite3.PARSE_DECLTYPES |
+con = sqlite3.connect("C:/Users/Никита/PycharmProjects/TamSyam/db/job.db", detect_types=sqlite3.PARSE_DECLTYPES |
                                                   sqlite3.PARSE_COLNAMES, check_same_thread=False)
 
 def createTable():
@@ -13,7 +13,7 @@ def getManagersId():
     if req == []:
         return []
     else:
-        return req[0]
+        return [row[0] for row in req]
 
 
 def show_workers(page: int = 0, page_size: int = 5):
@@ -135,12 +135,12 @@ def deleteOrderById(order_id: int) -> bool:
 
 
 
-def addOrderFromManager(adress: str, name: str, phone: str, desc: str):
+def addOrderFromManager(adress: str, name: str, phone: str, desc: str, dateArrive: str):
     cursor = con.cursor()
     cursor.execute("""
-        INSERT INTO Orders (Adress, FullName, Phone, Description, dateCreated)
-        VALUES (?, ?, ?, ?, ?)
-    """, (adress, name, phone, desc,     datetime.now().strftime("%d:%m:%Y")))
+        INSERT INTO Orders (Adress, FullName, Phone, Description, dateCreated, ArriveDate)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (adress, name, phone, desc,     datetime.now().strftime("%d:%m:%Y"), dateArrive))
     con.commit()
     cursor.close()
 

@@ -5,7 +5,7 @@ from keyboard.admin import get_manager_keyboard
 from create_bot import bot
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 router = Router()
-from db.admin import getAdminsId
+from db.admin import getOwnersId
 from aiogram.filters import BaseFilter, Command
 from typing import Union, List
 # Фильтр
@@ -26,7 +26,7 @@ class ChatTypeFilter(BaseFilter):
         return message.from_user.id in self.user_ids
 
 
-@router.message(F.text == "Менеджеры", ChatTypeFilter(getAdminsId()))
+@router.message(F.text == "Менеджеры", ChatTypeFilter(getOwnersId()))
 async def handle_users_list(message: Message):
     page = 0
     page_size = 5
@@ -50,7 +50,7 @@ async def handle_users_list(message: Message):
         await message.answer(text, reply_markup=keyboard)
 
 
-@router.callback_query(F.data.startswith("manager_next_"), ChatTypeFilter(getAdminsId()))
+@router.callback_query(F.data.startswith("manager_next_"), ChatTypeFilter(getOwnersId()))
 async def handle_users_next(callback: CallbackQuery):
     page = int(callback.data.split("_")[2])
     page_size = 5
@@ -68,7 +68,7 @@ async def handle_users_next(callback: CallbackQuery):
     await callback.answer()
 
 
-@router.callback_query(F.data.startswith("manager_prev_"), ChatTypeFilter(getAdminsId()))
+@router.callback_query(F.data.startswith("manager_prev_"), ChatTypeFilter(getOwnersId()))
 async def handle_users_prev(callback: CallbackQuery):
     page = int(callback.data.split("_")[2])
     page_size = 5

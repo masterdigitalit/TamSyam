@@ -37,14 +37,15 @@ async def handle_orders(message: Message):
     page_size = 5
     orders = get_orders(page, page_size)
     total_orders = count_orders()
+    keyboard = get_orders_keyboard(orders, page)
     if total_orders == 0:
         text = f"📦 Доступных заказов нет"
-        await message.answer(text)
+        await message.answer(text, reply_markup=keyboard)
     else:
 
         total_pages = (total_orders + page_size - 1) // page_size
 
-        keyboard = get_orders_keyboard(orders, page)
+
         text = f"📦 Доступные заказы:\nСтраница {page + 1} из {total_pages}"
         await message.answer(text, reply_markup=keyboard)
 

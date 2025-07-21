@@ -1,5 +1,5 @@
 from create_bot import bot
-from db.admin import getAdminsId
+from db.admin import getOwnersId
 async def manager_add_worker(params: dict):
     name = params.get("name", "Без имени")
     telegram_name = params.get("username", "Не указан")
@@ -18,8 +18,8 @@ async def manager_add_worker(params: dict):
     )
 
     # Рассылка менеджерам
-    for admin in getAdminsId():
+    for admin in getOwnersId():
         try:
            await bot.send_message(admin, text, parse_mode="HTML")
         except Exception as e:
-            print(f"Ошибка при отправке админу {getAdminsId}: {e}")
+            print(f"Ошибка при отправке админу {getOwnersId}: {e}")

@@ -2,13 +2,15 @@ from aiogram import Router, F
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
+from pyexpat.errors import messages
 
+from create_bot import bot
 from db.manager import addOrderFromManager
 
 from typing import Union, List
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
-from db.manager import getManagersId
+from db.admin import getOwnersId
 
 
 class ChatTypeFilter(BaseFilter):
@@ -55,15 +57,16 @@ def cancel_keyboard(callback: str = "cancel_add_order"):
 
 
 
-@router.callback_query(F.data == "add_order_manager", ChatTypeFilter(getManagersId()))
-async def start_add_order(callback: CallbackQuery, state: FSMContext):
+@router.message(F.text == "Добавить заказ", ChatTypeFilter(getOwnersId()))
+async def start_add_order(massage: Message, state: FSMContext):
     await state.set_state(AddOrderManagerState.adress)
-    await callback.message.edit_text("📍 Введите адрес заказа:", reply_markup=cancel_keyboard())
-    await callback.answer()
+    await bot.send_message(chat_id=massage.from_user.id,
+                                text='📍 Введите адрес заказа:', reply_markup=cancel_keyboard())
 
 
 
-@router.message(AddOrderManagerState.adress, ChatTypeFilter(getManagersId()))
+
+@router.message(AddOrderManagerState.adress, ChatTypeFilter(getOwnersId()))
 async def add_adress(msg: Message, state: FSMContext):
     await state.update_data(adress=msg.text)
     await state.set_state(AddOrderManagerState.name)
@@ -71,7 +74,7 @@ async def add_adress(msg: Message, state: FSMContext):
 
 
 
-@router.message(AddOrderManagerState.name, ChatTypeFilter(getManagersId()))
+@router.message(AddOrderManagerState.name, ChatTypeFilter(getOwnersId()))
 async def add_name(msg: Message, state: FSMContext):
     await state.update_data(name=msg.text)
     await state.set_state(AddOrderManagerState.phone)
@@ -79,7 +82,7 @@ async def add_name(msg: Message, state: FSMContext):
 
 
 
-@router.message(AddOrderManagerState.phone, ChatTypeFilter(getManagersId()))
+@router.message(AddOrderManagerState.phone, ChatTypeFilter(getOwnersId()))
 async def add_phone(msg: Message, state: FSMContext):
     await state.update_data(phone=msg.text)
     await state.set_state(AddOrderManagerState.desc)
@@ -87,7 +90,7 @@ async def add_phone(msg: Message, state: FSMContext):
 
 
 
-@router.message(AddOrderManagerState.desc, ChatTypeFilter(getManagersId()))
+@router.message(AddOrderManagerState.desc, ChatTypeFilter(getOwnersId()))
 async def add_desc(msg: Message, state: FSMContext):
     await state.update_data(desc=msg.text)
     data = await state.get_data()
@@ -97,7 +100,7 @@ async def add_desc(msg: Message, state: FSMContext):
     await state.set_state(AddOrderManagerState.dateArrive)
     await msg.answer('Введите дату и время прибытия в формате дд:мм:гг 16:00', reply_markup=cancel_keyboard())
 
-@router.message(AddOrderManagerState.dateArrive, ChatTypeFilter(getManagersId()))
+@router.message(AddOrderManagerState.dateArrive, ChatTypeFilter(getOwnersId()))
 async def add_desc(msg: Message, state: FSMContext):
     await state.update_data(dateArrive=msg.text)
     data = await state.get_data()
@@ -121,7 +124,7 @@ async def add_desc(msg: Message, state: FSMContext):
 
 
 
-@router.callback_query(F.data == "confirm_add_order", ChatTypeFilter(getManagersId()))
+@router.callback_query(F.data == "confirm_add_order", ChatTypeFilter(getOwnersId()))
 async def confirm_add(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
 
@@ -140,7 +143,7 @@ async def confirm_add(callback: CallbackQuery, state: FSMContext):
 
 
 
-@router.callback_query(F.data == "cancel_add_order", ChatTypeFilter(getManagersId()))
+@router.callback_query(F.data == "cancel_add_order", ChatTypeFilter(getOwnersId()))
 async def cancel_add(callback: CallbackQuery, state: FSMContext):
     await state.clear()
 
@@ -148,9 +151,5 @@ async def cancel_add(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(
         text="❌ Добавление заказа отменено.",
         parse_mode="HTML",
-        reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(text="⬅ Назад к заказам", callback_data="page_manager_0")]
-            ]
-        )
+
     )

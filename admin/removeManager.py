@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import BaseFilter
 from typing import Union, List
 
-from db.admin import delete_manager_by_id, getAdminsId
+from db.admin import delete_manager_by_id, getOwnersId
 
 
 router = Router()
@@ -30,7 +30,7 @@ def get_remove_manager_confirm_kb(manager_id: int):
     ])
 
 
-@router.callback_query(F.data.startswith("remove_manager_"), ChatTypeFilter(user_id=getAdminsId()))
+@router.callback_query(F.data.startswith("remove_manager_"), ChatTypeFilter(user_id=getOwnersId()))
 async def start_remove_manager(callback: CallbackQuery, state: FSMContext):
     manager_id = callback.data.split("_")[-1]
 
@@ -47,7 +47,7 @@ async def start_remove_manager(callback: CallbackQuery, state: FSMContext):
     )
 
 
-@router.callback_query(F.data.startswith("confirm_remove_manager_"), ChatTypeFilter(user_id=getAdminsId()))
+@router.callback_query(F.data.startswith("confirm_remove_manager_"), ChatTypeFilter(user_id=getOwnersId()))
 async def confirm_remove_manager(callback: CallbackQuery, state: FSMContext):
     manager_id = callback.data.split("_")[-1]
 
@@ -69,7 +69,7 @@ async def confirm_remove_manager(callback: CallbackQuery, state: FSMContext):
     await state.clear()
 
 
-@router.callback_query(F.data.startswith("cancel_remove_manager_"), ChatTypeFilter(user_id=getAdminsId()))
+@router.callback_query(F.data.startswith("cancel_remove_manager_"), ChatTypeFilter(user_id=getOwnersId()))
 async def cancel_remove_manager(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text("❌ Удаление менеджера отменено.")
     await state.clear()

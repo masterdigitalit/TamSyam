@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime
 import os
-DB_PATH = "C:/Users/maksi/PycharmProjects/job hendler/db/job.db"
+DB_PATH = "C:/Users/Никита/PycharmProjects/TamSyam/db/job.db"
 # SQL-команды для создания таблиц
 # ⚠️ Эти команды должны точно соответствовать структуре твоей БД!
 CREATE_ORDERS_TABLE = """

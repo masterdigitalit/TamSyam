@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from db.admin import get_user_by_id
 from keyboard.admin import back_to_managers_button
-from db.admin import getAdminsId
+from db.admin import getOwnersId
 from aiogram.filters import BaseFilter, Command
 from typing import Union, List
 
@@ -28,7 +28,7 @@ class ChatTypeFilter(BaseFilter):
 
 router = Router()
 
-@router.callback_query(F.data.startswith("manager_"), ChatTypeFilter(getAdminsId()))
+@router.callback_query(F.data.startswith("manager_"), ChatTypeFilter(getOwnersId()))
 async def handle_user_detail(callback: CallbackQuery):
     try:
         user_id = int(callback.data.split("_")[1])

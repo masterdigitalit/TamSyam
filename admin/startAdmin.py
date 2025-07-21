@@ -2,7 +2,7 @@ from aiogram import Router
 from create_bot import bot
 from keyboard.admin import main_menu_admin
 router = Router()
-from db.admin import getAdminsId
+from db.admin import getOwnersId
 from aiogram.filters import BaseFilter, Command
 from typing import Union, List
 
@@ -25,6 +25,6 @@ class ChatTypeFilter(BaseFilter):
         return message.from_user.id in self.user_ids
 
 
-@router.message(Command("start"), ChatTypeFilter(getAdminsId()))
+@router.message(Command("start"), ChatTypeFilter(user_id=getOwnersId()))
 async def admin_start_handler(message: Message):
     await bot.send_message(message.chat.id, "Привет, админ!\nЧто хочешь сделать ?", reply_markup=main_menu_admin())

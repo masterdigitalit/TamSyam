@@ -28,6 +28,6 @@ class ChatTypeFilter(BaseFilter):
 
 
 
-@router.message(Command("start"), ChatTypeFilter(getManagersId()))
+@router.message(Command("start"), ChatTypeFilter(user_id=getManagersId()))
 async def admin_start_handler(message: Message):
     await bot.send_message(message.chat.id, "Привет, менеджер!\nЧто хочешь сделать ?", reply_markup=main_menu_manager())

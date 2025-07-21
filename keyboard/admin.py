@@ -1,5 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 def get_users_keyboard(users, page: int) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardMarkup(row_width=1)
@@ -25,7 +26,7 @@ def main_menu_admin():
         keyboard=[
             [KeyboardButton(text="Статистика")],
             [KeyboardButton(text="Менеджеры")],
-            [KeyboardButton(text="Таблица")],
+            [KeyboardButton(text="Таблица")],[KeyboardButton(text="Добавить заказ")]
 
 
         ],
@@ -39,7 +40,8 @@ def statistic_menu_admin():
         inline_keyboard=[
             [
                 InlineKeyboardButton(text="📅 За сегодня", callback_data="stat_today"),
-                InlineKeyboardButton(text="📊 За все время", callback_data="stat_all")
+                InlineKeyboardButton(text="📊 За все время", callback_data="stat_all"),
+                InlineKeyboardButton(text="📊 По месяцам", callback_data="stat_show_month")
             ]
         ]
     )
@@ -125,7 +127,21 @@ def cancel_reply_keyboard():
         one_time_keyboard=True
     )
 
+def build_months_keyboard(months: list) -> InlineKeyboardMarkup:
+    """
+    Принимает список словарей с ключами "Название" и "Ключ"
+    и возвращает InlineKeyboardMarkup.
+    """
+    builder = InlineKeyboardBuilder()
 
+    for month in months:
+        builder.button(
+            text=month["Name"],
+            callback_data=f"month_stat_{month['Key']}"
+        )
+
+    builder.adjust(2)  # по 2 кнопки в ряд
+    return builder.as_markup()
 
 
 

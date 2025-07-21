@@ -71,5 +71,10 @@ async def delete_worker(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == "cancel_del", ChatTypeFilter(user_id=getManagersId()))
 async def cancel_delete_worker(callback: CallbackQuery, state: FSMContext):
-    await callback.message.edit_text("❌ Удаление отменено.", reply_markup=main_menu_manager())
+    if callback.from_user.id not in getManagersId():
+        await callback.answer("⛔ Нет доступа.", show_alert=True)
+        return
+
+    await bot.edit_message_text(message_id=callback.message.message_id,chat_id=callback.from_user.id,text="❌ Удаление отменено.",      parse_mode="HTML")
+
     await state.clear()

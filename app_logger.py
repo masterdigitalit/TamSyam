@@ -1,7 +1,7 @@
 import logging
 import os
 
-LOG_PATH = "C:/Users/maksi/PycharmProjects/asterica/logs/app.log"
+LOG_PATH = "C:/Users/Никита/PycharmProjects/TamSyam/log/app.log"
 os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
 
 logger = logging.getLogger("flask_app_logger")

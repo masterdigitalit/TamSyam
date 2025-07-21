@@ -11,7 +11,7 @@ from typing import Union, List
 
 from create_bot import bot
 from keyboard.admin import main_menu_admin
-from db.admin import getAdminsId, addManager, is_manager_exists
+from db.admin import getOwnersId, addManager, is_manager_exists
 
 router = Router()
 
@@ -52,21 +52,21 @@ class ChatTypeFilter(BaseFilter):
         return message.from_user.id in self.user_ids
 
 
-@router.callback_query(F.data == "add_manager_admin", ChatTypeFilter(user_id=getAdminsId()))
+@router.callback_query(F.data == "add_manager_admin", ChatTypeFilter(user_id=getOwnersId()))
 async def add_manager_start(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await state.set_state(AddManagerState.fio)
     await bot.send_message(callback.from_user.id, "📝 Введите ФИО менеджера одним сообщением:", reply_markup=cancel_inline_start())
 
 
-@router.message(AddManagerState.fio, ChatTypeFilter(user_id=getAdminsId()))
+@router.message(AddManagerState.fio, ChatTypeFilter(user_id=getOwnersId()))
 async def add_manager_fio(message: Message, state: FSMContext):
     await state.update_data(fio=message.text.strip())
     await state.set_state(AddManagerState.telegram_id)
     await message.answer("📩 Перешли сообщение от менеджера (чтобы получить Telegram ID):", reply_markup=cancel_inline_start())
 
 
-@router.message(AddManagerState.telegram_id, ChatTypeFilter(user_id=getAdminsId()))
+@router.message(AddManagerState.telegram_id, ChatTypeFilter(user_id=getOwnersId()))
 async def add_manager_forward(message: Message, state: FSMContext):
     text = message.text.strip().lower() if message.text else ""
 
@@ -108,7 +108,7 @@ async def add_manager_forward(message: Message, state: FSMContext):
     )
 
 
-@router.callback_query(AddManagerState.confirm, F.data == "add_manager_confirm", ChatTypeFilter(user_id=getAdminsId()))
+@router.callback_query(AddManagerState.confirm, F.data == "add_manager_confirm", ChatTypeFilter(user_id=getOwnersId()))
 async def confirm_add_manager(callback_query: CallbackQuery, state: FSMContext):
     data = await state.get_data()
 
@@ -138,14 +138,14 @@ async def confirm_add_manager(callback_query: CallbackQuery, state: FSMContext):
     )
     await state.clear()
 
-@router.callback_query(AddManagerState.confirm, F.data == "add_manager_restart", ChatTypeFilter(user_id=getAdminsId()))
+@router.callback_query(AddManagerState.confirm, F.data == "add_manager_restart", ChatTypeFilter(user_id=getOwnersId()))
 async def restart_manager(callback_query: CallbackQuery, state: FSMContext):
     await state.clear()
     await state.set_state(AddManagerState.fio)
     await bot.send_message(callback_query.from_user.id, "🔁 Введите ФИО менеджера:", reply_markup=cancel_inline_start())
 
 
-@router.callback_query(F.data == "add_manager_cancel", ChatTypeFilter(user_id=getAdminsId()))
+@router.callback_query(F.data == "add_manager_cancel", ChatTypeFilter(user_id=getOwnersId()))
 async def cancel_manager_inline(callback_query: CallbackQuery, state: FSMContext):
     await state.clear()
     await bot.delete_message(callback_query.from_user.id, callback_query.message.message_id)
