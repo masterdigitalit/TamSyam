@@ -13,7 +13,7 @@ async def handle_orders(message: Message):
     page = 0
     page_size = 5
     orders = get_user_orders(page, page_size, message.from_user.id )
-    print(orders)
+
     total_orders = count_user_orders(message.from_user.id)
     total_pages = (total_orders + page_size - 1) // page_size
 

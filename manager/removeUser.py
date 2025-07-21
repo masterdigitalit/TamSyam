@@ -19,8 +19,7 @@ class ChatTypeFilter(BaseFilter):
             self.user_ids = user_id or []
 
     async def __call__(self, callback: CallbackQuery) -> bool:
-        print(f"[FILTER] from_user.id = {callback.from_user.id}")
-        print(f"[FILTER] self.user_ids = {self.user_ids}")
+
         return callback.from_user.id in self.user_ids
 
 

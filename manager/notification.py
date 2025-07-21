@@ -4,7 +4,7 @@ from db.manager import get_user_by_id, getOrder, getManagersId
 async def worker_start_order(params):
     order = getOrder(params['order'])
     user = get_user_by_id(user_id=params['id'])
-    print(getManagersId, order, user)
+
     text = (
         f"🟡 <b>Работник начал выполнение заказа</b>\n\n"
         f"👤 <b>Работник:</b> {user['Name']} @{user['UserName']}\n"

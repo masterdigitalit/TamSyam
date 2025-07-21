@@ -22,4 +22,4 @@ async def manager_add_worker(params: dict):
         try:
            await bot.send_message(admin, text, parse_mode="HTML")
         except Exception as e:
-            print(f"Ошибка при отправке админу {getOwnersId}: {e}")
+            pass

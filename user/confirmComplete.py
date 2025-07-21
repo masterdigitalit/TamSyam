@@ -43,7 +43,7 @@ async def start_buy_one(callback_query: CallbackQuery, state: FSMContext):
 @router.message(BuyOneShortState.price)
 async def set_price(message: Message, state: FSMContext):
     text = message.text.strip().lower()
-    print(text)
+
 
 
     if text in ["❌ отменить", "❌ Отменить"]:

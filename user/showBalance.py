@@ -5,7 +5,7 @@ router = Router()
 @router.message(F.text.lower() == "баланс")
 async def handle_balance(message: Message):
     user_id = message.from_user.id
-    print(user_id)
+
     paid = get_user_done_paid_orders(user_id)
 
     await message.answer(f"""

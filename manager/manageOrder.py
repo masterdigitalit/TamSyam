@@ -22,8 +22,7 @@ class ChatTypeFilter(BaseFilter):
             self.user_ids = user_id or []
 
     async def __call__(self, message: Message) -> bool:
-        print(f"[FILTER] from_user.id = {message.from_user.id}")
-        print(f"[FILTER] self.user_ids = {self.user_ids}")
+
         return message.from_user.id in self.user_ids
 
 
@@ -49,7 +48,7 @@ async def handle_order_detail(callback: CallbackQuery):
 
     order = dict(row)
     page = 0
-    print(order)
+
 
     if order['Done']:
         worker_list = getOrderWorker(order['WorkerId'])

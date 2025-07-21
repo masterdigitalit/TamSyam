@@ -22,8 +22,7 @@ class ChatTypeFilter(BaseFilter):
 
     async def __call__(self, message: Message) -> bool:
 
-        print(f"[FILTER] from_user.id = {message.from_user.id}")
-        print(f"[FILTER] self.user_ids = {self.user_ids}")
+
 
         if not self.user_ids:
             return False

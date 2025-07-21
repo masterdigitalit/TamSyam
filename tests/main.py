@@ -57,10 +57,10 @@ def check_url(id_code: uuid.UUID,
             with LOCK:
                 with open("found.txt", "a", encoding="utf-8") as f:
                     f.write(f"{id_code}\n")
-                print(f"❗ Обнаружена страница: {url}")
+
             return True
     except requests.RequestException as e:
-        print(f"⚠ Ошибка запроса {url}: {e}")
+
     return False
 
 def worker(args_tuple):
@@ -109,8 +109,7 @@ def main():
         tasks.append((current, args.clock_seq, args.node, args.timeout))
         current += step_delta
 
-    print(f"Всего итераций: {len(tasks)}")
-    print(f"Запуск {args.workers} воркеров…")
+
 
     # Параллельно сканируем
     with ThreadPoolExecutor(max_workers=args.workers) as executor:
@@ -122,7 +121,7 @@ def main():
                 pass
             time.sleep(args.delay)
 
-    print("Готово! Успешные UUID записаны в found.txt")
+
 
 if __name__ == "__main__":
     main()

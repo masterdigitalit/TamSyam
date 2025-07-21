@@ -90,8 +90,7 @@ def get_user_orders(page: int = 0, page_size: int = 5, id: int = 0):
         (id,page_size, offset)
     )
     rows = cursor.fetchall()
-    print(rows)
-    print(id)
+
 
     return [dict(row) for row in rows]
 

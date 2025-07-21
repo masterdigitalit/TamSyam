@@ -10,7 +10,7 @@ def createTable():
 def getOwnersId():
     cursor = con.cursor()
     req = cursor.execute("""SELECT telegramId FROM Users WHERE Status = "Owner" """, ).fetchall()
-    print(req)
+
     if req == []:
         return [0]
     else:

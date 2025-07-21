@@ -83,8 +83,7 @@ def get_orders(page: int = 0, page_size: int = 5, id: int = 0):
         (page_size, offset)
     )
     rows = cursor.fetchall()
-    print(rows)
-    print(id)
+
 
     return [dict(row) for row in rows]
 
@@ -109,8 +108,7 @@ def getOrderWorker(id):
         [int(id)]
     )
     rows = cursor.fetchall()
-    print(rows)
-    print(id)
+
 
     return [dict(row) for row in rows]
 
@@ -130,7 +128,7 @@ def deleteOrderById(order_id: int) -> bool:
         con.commit()
         return cursor.rowcount > 0
     except Exception as e:
-        print(f"[DB ERROR] {e}")
+
         return False
 
 
