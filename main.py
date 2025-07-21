@@ -5,7 +5,7 @@ from app_logger import logger
 from create_bot import dp, bot
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from user import startUser, showOrdersUser, showOrderToUser, startOrder, showMyOrders, confirmComplete, showBalance
-from admin import startAdmin, showStatistics, showManagers, showManagerInfo, removeManager, addManager, getExcel
+from admin import startAdmin, showStatistics, showManagers, showManagerInfo, removeManager, addManager, getExcel, addOrderFromAdmin
 from manager import startManager, showUsers, showUserInfo, addUser, removeUser, manageOrder, showOrdersManager, addOrder
 from middlewares.logger import MessageLoggerMiddleware, CallbackLoggerMiddleware
 from db.create import init_db
@@ -62,7 +62,8 @@ async def telegram():
         showManagerInfo.router,
         removeManager.router,
         addManager.router,
-        getExcel.router
+        getExcel.router,
+        addOrderFromAdmin.router
     )
     # manager
     dp.include_routers(
